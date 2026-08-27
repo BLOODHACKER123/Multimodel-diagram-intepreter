@@ -1,0 +1,25 @@
+{
+  "id": "graph-shortest-path",
+  "title": "Weighted Graph: Dijkstra Example",
+  "diagramType": "graph",
+  "summary": "A weighted undirected graph with six nodes labeled A through F, used to demonstrate shortest-path algorithms.",
+  "imageSize": { "width": 900, "height": 700 },
+  "nodes": [
+    { "id": "a", "label": "A", "type": "state", "shape": "circle", "x": 0.20, "y": 0.20, "width": 0.08, "height": 0.08 },
+    { "id": "b", "label": "B", "type": "state", "shape": "circle", "x": 0.60, "y": 0.15, "width": 0.08, "height": 0.08 },
+    { "id": "c", "label": "C", "type": "state", "shape": "circle", "x": 0.85, "y": 0.40, "width": 0.08, "height": 0.08 },
+    { "id": "d", "label": "D", "type": "state", "shape": "circle", "x": 0.55, "y": 0.55, "width": 0.08, "height": 0.08 },
+    { "id": "e", "label": "E", "type": "state", "shape": "circle", "x": 0.25, "y": 0.65, "width": 0.08, "height": 0.08 },
+    { "id": "f", "label": "F", "type": "state", "shape": "circle", "x": 0.75, "y": 0.80, "width": 0.08, "height": 0.08 }
+  ],
+  "edges": [
+    { "id": "g1", "source": "a", "target": "b", "label": "4", "weight": 4, "directed": false },
+    { "id": "g2", "source": "a", "target": "d", "label": "2", "weight": 2, "directed": false },
+    { "id": "g3", "source": "b", "target": "c", "label": "1", "weight": 1, "directed": false },
+    { "id": "g4", "source": "c", "target": "d", "label": "3", "weight": 3, "directed": false },
+    { "id": "g5", "source": "d", "target": "e", "label": "5", "weight": 5, "directed": false },
+    { "id": "g6", "source": "e", "target": "f", "label": "2", "weight": 2, "directed": false },
+    { "id": "g7", "source": "c", "target": "f", "label": "6", "weight": 6, "directed": false },
+    { "id": "g8", "source": "b", "target": "d", "label": "2", "weight": 2, "directed": false }
+  ]
+}

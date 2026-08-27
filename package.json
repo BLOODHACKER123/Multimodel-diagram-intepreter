@@ -1,0 +1,26 @@
+{
+  "name": "multimodal-diagram-interpreter",
+  "version": "0.1.0",
+  "private": true,
+  "description": "AI-powered translation layer that turns static technical diagrams into interactive audio-haptic spatial maps.",
+  "type": "module",
+  "workspaces": [
+    "server",
+    "web"
+  ],
+  "scripts": {
+    "dev": "concurrently -n api,web -c blue,green \"npm run dev:server\" \"npm run dev:web\"",
+    "dev:server": "cd server && npm run dev",
+    "dev:web": "cd web && npm run dev",
+    "build": "cd web && npm run build",
+    "start": "cross-env NODE_ENV=production node server/src/index.js",
+    "typecheck": "cd web && tsc --noEmit"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "cross-env": "^7.0.3"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -1,0 +1,98 @@
+.canvas-container {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  position: relative;
+  min-height: 300px;
+}
+
+.diagram-canvas {
+  width: 100%;
+  height: auto;
+  display: block;
+  touch-action: none;
+  outline: none;
+}
+
+.diagram-canvas:focus {
+  outline: 3px solid var(--focus-color);
+  outline-offset: 2px;
+}
+
+.node-shape {
+  cursor: pointer;
+}
+
+.node-shape ellipse,
+.node-shape rect,
+.node-shape polygon {
+  fill: var(--node-fill);
+  stroke: var(--node-color);
+  stroke-width: 3;
+  filter: drop-shadow(0 0 2px var(--bg));
+  transition: fill 0.1s, stroke 0.1s;
+}
+
+.node-shape:hover ellipse,
+.node-shape:hover rect,
+.node-shape:hover polygon,
+.node-shape.focused ellipse,
+.node-shape.focused rect,
+.node-shape.focused polygon {
+  fill: rgba(138, 180, 248, 0.35);
+  stroke: var(--focus-color);
+}
+
+.node-label {
+  fill: var(--text);
+  font-size: 16px;
+  font-weight: 600;
+  pointer-events: none;
+  user-select: none;
+}
+
+.edge-visible {
+  stroke-linecap: round;
+  stroke-width: 4;
+  filter: drop-shadow(0 0 2px var(--bg));
+}
+
+.edge-hit {
+  cursor: pointer;
+  opacity: 0;
+}
+
+.edge-shape:hover .edge-visible,
+.edge-shape.focused .edge-visible {
+  stroke: var(--focus-color);
+}
+
+.edge-label {
+  fill: var(--text);
+  font-size: 12px;
+  font-weight: 600;
+  pointer-events: none;
+  user-select: none;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+  paint-order: stroke;
+  stroke: var(--bg);
+  stroke-width: 3px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.focus-ring {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .focus-ring {
+    animation: none;
+  }
+}

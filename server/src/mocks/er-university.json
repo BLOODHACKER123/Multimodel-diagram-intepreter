@@ -1,0 +1,22 @@
+{
+  "id": "er-university",
+  "title": "University Enrollment ER Model",
+  "diagramType": "er",
+  "summary": "An entity-relationship model with five entities. STUDENT connects to COURSE through the ENROLLMENT junction entity. COURSE is taught by INSTRUCTOR, and both COURSE and INSTRUCTOR belong to DEPARTMENT.",
+  "imageSize": { "width": 1200, "height": 800 },
+  "nodes": [
+    { "id": "student", "label": "STUDENT", "type": "entity", "shape": "rect", "x": 0.18, "y": 0.25, "width": 0.14, "height": 0.08 },
+    { "id": "enrollment", "label": "ENROLLMENT", "type": "entity", "shape": "rect", "x": 0.50, "y": 0.25, "width": 0.16, "height": 0.08 },
+    { "id": "course", "label": "COURSE", "type": "entity", "shape": "rect", "x": 0.82, "y": 0.25, "width": 0.12, "height": 0.08 },
+    { "id": "instructor", "label": "INSTRUCTOR", "type": "entity", "shape": "rect", "x": 0.82, "y": 0.68, "width": 0.16, "height": 0.08 },
+    { "id": "department", "label": "DEPARTMENT", "type": "entity", "shape": "rect", "x": 0.50, "y": 0.68, "width": 0.16, "height": 0.08 }
+  ],
+  "edges": [
+    { "id": "e1", "source": "student", "target": "enrollment", "label": "enrolls in", "relationship": "one-to-many", "directed": false },
+    { "id": "e2", "source": "enrollment", "target": "course", "label": "refers to", "relationship": "many-to-one", "directed": false },
+    { "id": "e3", "source": "course", "target": "instructor", "label": "taught by", "relationship": "many-to-one", "directed": false },
+    { "id": "e4", "source": "instructor", "target": "department", "label": "belongs to", "relationship": "many-to-one", "directed": false },
+    { "id": "e5", "source": "course", "target": "department", "label": "offered by", "relationship": "many-to-one", "directed": false },
+    { "id": "e6", "source": "student", "target": "department", "label": "majors in", "relationship": "many-to-one", "directed": false }
+  ]
+}

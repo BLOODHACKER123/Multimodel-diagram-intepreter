@@ -1,0 +1,31 @@
+{
+  "id": "cloud-web-app",
+  "title": "Three-Tier Web Application on Cloud",
+  "diagramType": "cloud-architecture",
+  "summary": "A cloud architecture showing users reaching a web application through CDN and load balancer, with web servers calling an API service backed by cache, primary database, and object storage, plus a monitoring service.",
+  "imageSize": { "width": 1400, "height": 700 },
+  "nodes": [
+    { "id": "users", "label": "Users", "type": "actor", "shape": "circle", "x": 0.08, "y": 0.50, "width": 0.08, "height": 0.08 },
+    { "id": "cdn", "label": "CDN", "type": "service", "shape": "cloud", "x": 0.22, "y": 0.50, "width": 0.10, "height": 0.08 },
+    { "id": "lb", "label": "Load Balancer", "type": "service", "shape": "rounded", "x": 0.38, "y": 0.50, "width": 0.14, "height": 0.08 },
+    { "id": "web-1", "label": "Web Server 1", "type": "service", "shape": "rect", "x": 0.56, "y": 0.30, "width": 0.13, "height": 0.08 },
+    { "id": "web-2", "label": "Web Server 2", "type": "service", "shape": "rect", "x": 0.56, "y": 0.70, "width": 0.13, "height": 0.08 },
+    { "id": "api", "label": "API Service", "type": "service", "shape": "rounded", "x": 0.72, "y": 0.50, "width": 0.12, "height": 0.08 },
+    { "id": "cache", "label": "Cache", "type": "database", "shape": "cylinder", "x": 0.88, "y": 0.25, "width": 0.10, "height": 0.08 },
+    { "id": "primary-db", "label": "Primary Database", "type": "database", "shape": "cylinder", "x": 0.88, "y": 0.50, "width": 0.15, "height": 0.08 },
+    { "id": "storage", "label": "Object Storage", "type": "database", "shape": "cylinder", "x": 0.88, "y": 0.75, "width": 0.15, "height": 0.08 },
+    { "id": "monitoring", "label": "Monitoring", "type": "service", "shape": "rounded", "x": 0.56, "y": 0.88, "width": 0.12, "height": 0.08 }
+  ],
+  "edges": [
+    { "id": "c1", "source": "users", "target": "cdn", "label": "requests", "directed": true },
+    { "id": "c2", "source": "cdn", "target": "lb", "label": "forwards", "directed": true },
+    { "id": "c3", "source": "lb", "target": "web-1", "label": "distributes", "directed": true },
+    { "id": "c4", "source": "lb", "target": "web-2", "label": "distributes", "directed": true },
+    { "id": "c5", "source": "web-1", "target": "api", "label": "calls", "directed": true },
+    { "id": "c6", "source": "web-2", "target": "api", "label": "calls", "directed": true },
+    { "id": "c7", "source": "api", "target": "cache", "label": "reads", "directed": true },
+    { "id": "c8", "source": "api", "target": "primary-db", "label": "queries", "directed": true },
+    { "id": "c9", "source": "api", "target": "storage", "label": "stores files", "directed": true },
+    { "id": "c10", "source": "monitoring", "target": "api", "label": "observes", "directed": true, "style": "dashed" }
+  ]
+}
