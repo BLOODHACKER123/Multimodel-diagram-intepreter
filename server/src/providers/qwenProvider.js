@@ -68,8 +68,9 @@ export function createQwenProvider(config) {
     textModel: config.qwenTextModel,
 
     async extract({ buffer, mimeType }) {
-      const dims = getImageDimensions(buffer)
       const { buffer: visionBuffer, mimeType: visionMimeType } = await resizeImage(buffer)
+      // Coordinates from the model are fractions of the image it actually analyzed (the resized one).
+      const dims = getImageDimensions(visionBuffer)
       const rawText = await extractFromImage({ buffer: visionBuffer, mimeType: visionMimeType || mimeType })
       const rawGraph = await parseExtraction(rawText, true)
       if (dims) {

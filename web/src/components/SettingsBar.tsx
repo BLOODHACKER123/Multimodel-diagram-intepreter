@@ -17,7 +17,7 @@ export function SettingsBar() {
       </label>
 
       <label>
-        Rate
+        Explain Speed
         <input
           type="range"
           min="0.5"

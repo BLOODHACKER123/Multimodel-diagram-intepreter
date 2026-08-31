@@ -109,10 +109,16 @@ export function normalizeGraph(raw, diagramId) {
 
   const nodeIds = new Set(nodes.map((n) => n.id))
   const nodeMap = Object.fromEntries(nodes.map((n) => [n.id, n]))
+  const labelToId = Object.fromEntries(nodes.map((n) => [slugify(n.label), n.id]))
+
+  function resolveEndpoint(endpoint) {
+    const slug = slugify(endpoint || '')
+    return nodeMap[slug] ? slug : labelToId[slug]
+  }
 
   const edges = (raw.edges || []).map((e, idx) => {
-    const source = nodeMap[e.source] ? e.source : undefined
-    const target = nodeMap[e.target] ? e.target : undefined
+    const source = resolveEndpoint(e.source)
+    const target = resolveEndpoint(e.target)
     if (!source || !target) {
       warnings.push(`edge-${idx + 1}: unknown endpoint (${e.source} → ${e.target})`)
     }

@@ -1,5 +1,5 @@
 import type { DiagramGraph, GraphEdge } from '../types/graph'
-import { toViewBoxX, toViewBoxY } from '../utils/geometry'
+import { toViewBoxX, toViewBoxY, nodeCenter, boundaryPoint } from '../utils/geometry'
 import { ariaLabelForEdge } from '../utils/describe'
 
 interface EdgeShapeProps {
@@ -15,14 +15,23 @@ export function EdgeShape({ edge, graph, aspectRatio, isFocused, onFocus }: Edge
   const target = graph.nodes.find((n) => n.id === edge.target)
   if (!source || !target) return null
 
-  const x1 = toViewBoxX(source.x)
-  const y1 = toViewBoxY(source.y, aspectRatio)
-  const x2 = toViewBoxX(target.x)
-  const y2 = toViewBoxY(target.y, aspectRatio)
+  const sourceCenter = nodeCenter(source, aspectRatio)
+  const targetCenter = nodeCenter(target, aspectRatio)
+  const waypoints = (edge.waypoints || []).map((p) => ({ x: toViewBoxX(p.x), y: toViewBoxY(p.y, aspectRatio) }))
 
-  const points = [x1, y1]
-    .concat((edge.waypoints || []).flatMap((p) => [toViewBoxX(p.x), toViewBoxY(p.y, aspectRatio)]))
-    .concat([x2, y2])
+  const sourceDir = waypoints.length > 0
+    ? { x: waypoints[0].x - sourceCenter.x, y: waypoints[0].y - sourceCenter.y }
+    : { x: targetCenter.x - sourceCenter.x, y: targetCenter.y - sourceCenter.y }
+  const targetDir = waypoints.length > 0
+    ? { x: waypoints[waypoints.length - 1].x - targetCenter.x, y: waypoints[waypoints.length - 1].y - targetCenter.y }
+    : { x: sourceCenter.x - targetCenter.x, y: sourceCenter.y - targetCenter.y }
+
+  const from = boundaryPoint(source, aspectRatio, sourceDir)
+  const to = boundaryPoint(target, aspectRatio, targetDir)
+
+  const points = [from.x, from.y]
+    .concat(waypoints.flatMap((p) => [p.x, p.y]))
+    .concat([to.x, to.y])
 
   const d = `M ${points[0]} ${points[1]} ` + points.slice(2).reduce((acc, val, i, arr) => {
     if (i % 2 === 0) return acc + `L ${val} ${arr[i + 1]} `
@@ -31,6 +40,9 @@ export function EdgeShape({ edge, graph, aspectRatio, isFocused, onFocus }: Edge
 
   const dash = edge.style === 'dashed' ? '8,6' : edge.style === 'dotted' ? '2,4' : undefined
   const marker = edge.directed ? 'url(#arrowhead)' : undefined
+
+  const labelX = (from.x + to.x) / 2
+  const labelY = (from.y + to.y) / 2
 
   return (
     <g data-edge-id={edge.id} className={`edge-shape ${isFocused ? 'focused' : ''}`}>
@@ -58,8 +70,8 @@ export function EdgeShape({ edge, graph, aspectRatio, isFocused, onFocus }: Edge
       />
       {edge.label && (
         <text
-          x={(x1 + x2) / 2}
-          y={(y1 + y2) / 2}
+          x={labelX}
+          y={labelY}
           textAnchor="middle"
           dominantBaseline="middle"
           className="edge-label"

@@ -31,7 +31,8 @@ export const EXTRACTION_SYSTEM_PROMPT = `You are a diagram parser. Analyze the u
 
 Rules:
 - Read the exact text inside each shape and use it as the node label. Do not use generic placeholders like "entity", "attribute", "process", or "database" unless that word literally appears in the shape.
-- For every connecting line between two shapes, create an edge. Use the labels of the two connected shapes as source and target. Include any cardinality text (1, N, M, etc.) or verb in the edge label.
+- For every connecting line between two shapes, create an edge. Use the short slug id of each connected shape as source and target (not its label text). Include any cardinality text (1, N, M, etc.) or verb in the edge label.
+- Every edge source and target must exactly match the id of a node in the nodes array.
 - Relationship diamonds (e.g. "enrolls in", "belongs to", "teaches") must have edges to every entity or attribute they touch. A diamond with zero edges is always wrong.
 - If a line runs through or ends at a diamond, split it into two edges: entity→diamond and diamond→entity.
 - Trace every line to its two endpoints. If you see STUDENT — enrolls in — ENROLLMENT, output edges "student→enrolls-in" AND "enrolls-in→enrollment", not just one of them.
