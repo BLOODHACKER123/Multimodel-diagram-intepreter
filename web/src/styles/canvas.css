@@ -1,10 +1,16 @@
 .canvas-container {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 0.5rem;
-  padding: 0.5rem;
+  border-radius: var(--radius-md);
+  padding: 0.75rem;
   position: relative;
-  min-height: 300px;
+  min-height: 320px;
+  background-image:
+    linear-gradient(rgba(var(--accent-rgb), 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--accent-rgb), 0.05) 1px, transparent 1px);
+  background-size: 32px 32px;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
 }
 
 .diagram-canvas {
@@ -13,6 +19,7 @@
   display: block;
   touch-action: none;
   outline: none;
+  border-radius: var(--radius-sm);
 }
 
 .diagram-canvas:focus {
@@ -22,40 +29,60 @@
 
 .node-shape {
   cursor: pointer;
+  --type-color: var(--node-color);
+  --type-fill: var(--node-fill);
 }
+
+.node-shape[data-type="attribute"] { --type-color: #7dd3fc; --type-fill: rgba(125, 211, 252, 0.14); }
+.node-shape[data-type="process"]   { --type-color: var(--accent-2); --type-fill: var(--accent-2-soft); }
+.node-shape[data-type="service"]   { --type-color: var(--accent-2); --type-fill: var(--accent-2-soft); }
+.node-shape[data-type="database"]  { --type-color: #ffb84d; --type-fill: rgba(255, 184, 77, 0.14); }
+.node-shape[data-type="decision"]  { --type-color: #ff8a65; --type-fill: rgba(255, 138, 101, 0.14); }
+.node-shape[data-type="actor"]     { --type-color: #f472b6; --type-fill: rgba(244, 114, 182, 0.14); }
+.node-shape[data-type="group"]     { --type-color: var(--text-dim); --type-fill: transparent; }
+.node-shape[data-type="other"]     { --type-color: var(--text-dim); --type-fill: rgba(148, 163, 184, 0.1); }
 
 .node-shape ellipse,
 .node-shape rect,
 .node-shape polygon {
-  fill: var(--node-fill);
-  stroke: var(--node-color);
+  fill: var(--type-fill);
+  stroke: var(--type-color);
   stroke-width: 3;
   filter: drop-shadow(0 0 2px var(--bg));
-  transition: fill 0.1s, stroke 0.1s;
+  transition: fill 0.15s ease, stroke 0.15s ease, filter 0.15s ease, transform 0.15s ease;
+  transform-box: fill-box;
+  transform-origin: center;
 }
 
 .node-shape:hover ellipse,
 .node-shape:hover rect,
-.node-shape:hover polygon,
+.node-shape:hover polygon {
+  filter: drop-shadow(0 0 6px var(--type-color));
+  transform: scale(1.035);
+}
+
 .node-shape.focused ellipse,
 .node-shape.focused rect,
 .node-shape.focused polygon {
-  fill: rgba(138, 180, 248, 0.35);
   stroke: var(--focus-color);
+  filter: drop-shadow(0 0 8px var(--focus-color));
 }
 
 .node-label {
   fill: var(--text);
+  font-family: 'Inter', sans-serif;
   font-size: 16px;
   font-weight: 600;
   pointer-events: none;
   user-select: none;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
 }
 
 .edge-visible {
   stroke-linecap: round;
-  stroke-width: 4;
+  stroke-width: 3.5;
   filter: drop-shadow(0 0 2px var(--bg));
+  transition: stroke 0.15s ease, filter 0.15s ease, stroke-width 0.15s ease;
 }
 
 .edge-hit {
@@ -63,21 +90,34 @@
   opacity: 0;
 }
 
-.edge-shape:hover .edge-visible,
+.edge-shape:hover .edge-visible {
+  stroke: var(--accent);
+  stroke-width: 4.5;
+  filter: drop-shadow(0 0 6px var(--accent));
+}
+
 .edge-shape.focused .edge-visible {
   stroke: var(--focus-color);
+  stroke-width: 5;
+  filter: drop-shadow(0 0 8px var(--focus-color));
+  stroke-dasharray: 10 6;
+  animation: signal-flow 0.8s linear infinite;
+}
+
+@keyframes signal-flow {
+  to { stroke-dashoffset: -32; }
 }
 
 .edge-label {
   fill: var(--text);
-  font-size: 12px;
-  font-weight: 600;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
   pointer-events: none;
   user-select: none;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
   paint-order: stroke;
   stroke: var(--bg);
-  stroke-width: 3px;
+  stroke-width: 4px;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
@@ -91,8 +131,29 @@
   50% { opacity: 0.5; }
 }
 
+.ping-ring {
+  fill: none;
+  stroke: var(--focus-color);
+  stroke-width: 2;
+  pointer-events: none;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: ping-expand 1.6s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.ping-ring-2 {
+  animation-delay: 0.5s;
+}
+
+@keyframes ping-expand {
+  0% { transform: scale(0.9); opacity: 0.7; }
+  80%, 100% { transform: scale(1.7); opacity: 0; }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .focus-ring {
+  .focus-ring,
+  .ping-ring,
+  .edge-shape.focused .edge-visible {
     animation: none;
   }
 }

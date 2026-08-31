@@ -14,19 +14,26 @@ export function FocusRing({ graph, focus, aspectRatio }: FocusRingProps) {
     const node = graph.nodes.find((n) => n.id === focus.id)
     if (!node) return null
     const rect = nodeRect(node, aspectRatio)
+    const cx = rect.x + rect.width / 2
+    const cy = rect.y + rect.height / 2
+    const baseR = Math.max(rect.width, rect.height) / 2 + 8
+
     return (
-      <rect
-        x={rect.x - 6}
-        y={rect.y - 6}
-        width={rect.width + 12}
-        height={rect.height + 12}
-        fill="none"
-        stroke="var(--focus-color)"
-        strokeWidth={4}
-        rx={node.shape === 'rounded' || node.shape === 'circle' || node.shape === 'ellipse' ? 999 : 0}
-        className="focus-ring"
-        pointerEvents="none"
-      />
+      <g pointerEvents="none">
+        <rect
+          x={rect.x - 6}
+          y={rect.y - 6}
+          width={rect.width + 12}
+          height={rect.height + 12}
+          fill="none"
+          stroke="var(--focus-color)"
+          strokeWidth={4}
+          rx={node.shape === 'rounded' || node.shape === 'circle' || node.shape === 'ellipse' ? 999 : 0}
+          className="focus-ring"
+        />
+        <circle cx={cx} cy={cy} r={baseR} className="ping-ring ping-ring-1" />
+        <circle cx={cx} cy={cy} r={baseR} className="ping-ring ping-ring-2" />
+      </g>
     )
   }
 

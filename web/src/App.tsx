@@ -58,10 +58,11 @@ function AppContent() {
 
   return (
     <div className="app">
-      <header>
-        <h1>Multimodal Diagram Interpreter</h1>
-        <p>Touch, hear, and ask questions about technical diagrams.</p>
-      </header>
+        <header>
+          <span className="eyebrow">Accessible • Audio-Haptic</span>
+            <h1>Multimodal Diagram Interpreter</h1>
+              <p>Touch, hear, and ask questions about technical diagrams.</p>
+        </header>
 
       <main>
         <SettingsBar />

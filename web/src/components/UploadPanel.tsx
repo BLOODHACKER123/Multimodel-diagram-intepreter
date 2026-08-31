@@ -13,6 +13,8 @@ interface UploadPanelProps {
 export function UploadPanel({ onExtraction, onLoading, onError }: UploadPanelProps) {
   const [samples, setSamples] = useState<SampleInfo[]>([])
   const [samplesLoaded, setSamplesLoaded] = useState(false)
+  const [isDragging, setIsDragging] = useState(false)
+  const dragCounter = useRef(0)
   const inputRef = useRef<HTMLInputElement>(null)
 
   const loadSamples = useCallback(async () => {
@@ -41,9 +43,26 @@ export function UploadPanel({ onExtraction, onLoading, onError }: UploadPanelPro
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault()
+    dragCounter.current = 0
+    setIsDragging(false)
     const file = e.dataTransfer.files[0]
     if (file) processFile(file)
   }, [processFile])
+
+  const handleDragEnter = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    dragCounter.current += 1
+    setIsDragging(true)
+  }, [])
+
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    dragCounter.current -= 1
+    if (dragCounter.current <= 0) {
+      dragCounter.current = 0
+      setIsDragging(false)
+    }
+  }, [])
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -64,8 +83,10 @@ export function UploadPanel({ onExtraction, onLoading, onError }: UploadPanelPro
   return (
     <div className="upload-panel">
       <div
-        className="drop-zone"
+        className={`drop-zone${isDragging ? ' is-dragging' : ''}`}
         onDragOver={(e) => e.preventDefault()}
+        onDragEnter={handleDragEnter}
+        onDragLeave={handleDragLeave}
         onDrop={handleDrop}
         onClick={() => inputRef.current?.click()}
         role="button"
@@ -73,7 +94,11 @@ export function UploadPanel({ onExtraction, onLoading, onError }: UploadPanelPro
         aria-label="Upload diagram image"
         onFocus={loadSamples}
       >
-        <p>Drag & drop a diagram image here, or click to choose a file.</p>
+        <svg className="drop-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 16V4M12 4L7 9M12 4l5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+        <p>{isDragging ? 'Drop it here' : 'Drag & drop a diagram image here, or click to choose a file.'}</p>
         <input
           ref={inputRef}
           type="file"
@@ -99,7 +124,6 @@ export function UploadPanel({ onExtraction, onLoading, onError }: UploadPanelPro
               ))}
         </div>
       </div>
-
     </div>
   )
 }

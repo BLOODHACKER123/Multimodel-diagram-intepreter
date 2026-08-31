@@ -37,6 +37,7 @@ export function NodeShape({ node, graph, aspectRatio, isFocused, onFocus }: Node
   return (
     <g
       data-node-id={node.id}
+      data-type={node.type}
       role="button"
       tabIndex={0}
       aria-label={ariaLabelForNode(node, graph)}
