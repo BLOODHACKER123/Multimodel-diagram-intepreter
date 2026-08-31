@@ -1,4 +1,4 @@
-export function downscaleImage(file: File, maxLongEdge = 1600, quality = 0.85): Promise<Blob> {
+export function downscaleImage(file: File, maxLongEdge = 1600): Promise<Blob> {
   return new Promise((resolve, reject) => {
     const img = new Image()
     const url = URL.createObjectURL(file)
