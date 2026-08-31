@@ -15,6 +15,9 @@ export function UploadPanel({ onExtraction, onLoading, onError }: UploadPanelPro
   const [samplesLoaded, setSamplesLoaded] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [lastFile, setLastFile] = useState<File | null>(null)
+  const [lastSampleId, setLastSampleId] = useState<string | null>(null)
   const dragCounter = useRef(0)
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -30,6 +33,9 @@ export function UploadPanel({ onExtraction, onLoading, onError }: UploadPanelPro
   }, [samplesLoaded])
 
   const processFile = useCallback(async (file: File) => {
+    setError(null)
+    setLastFile(file)
+    setLastSampleId(null)
     setIsLoading(true)
     onLoading()
     try {
@@ -39,7 +45,9 @@ export function UploadPanel({ onExtraction, onLoading, onError }: UploadPanelPro
       const imageUrl = URL.createObjectURL(downsized)
       onExtraction(result, imageUrl)
     } catch (err) {
-      onError(err instanceof Error ? err.message : 'Upload failed')
+      const errorMsg = err instanceof Error ? err.message : 'Upload failed'
+      setError(errorMsg)
+      onError(errorMsg)
     } finally {
       setIsLoading(false)
     }
@@ -50,7 +58,10 @@ export function UploadPanel({ onExtraction, onLoading, onError }: UploadPanelPro
     dragCounter.current = 0
     setIsDragging(false)
     const file = e.dataTransfer.files[0]
-    if (file) processFile(file)
+    if (file) {
+      setError(null)
+      processFile(file)
+    }
   }, [processFile])
 
   const handleDragEnter = useCallback((e: React.DragEvent) => {
@@ -70,22 +81,38 @@ export function UploadPanel({ onExtraction, onLoading, onError }: UploadPanelPro
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
-    if (file) processFile(file)
+    if (file) {
+      setError(null)
+      processFile(file)
+    }
     e.target.value = ''
   }, [processFile])
 
   const handleSample = useCallback(async (id: string) => {
+    setError(null)
+    setLastFile(null)
+    setLastSampleId(id)
     setIsLoading(true)
     onLoading()
     try {
       const result = await extractMock(id)
       onExtraction(result)
     } catch (err) {
-      onError(err instanceof Error ? err.message : 'Failed to load sample')
+      const errorMsg = err instanceof Error ? err.message : 'Failed to load sample'
+      setError(errorMsg)
+      onError(errorMsg)
     } finally {
       setIsLoading(false)
     }
   }, [onExtraction, onLoading, onError])
+
+  const handleRetry = useCallback(() => {
+    if (lastFile) {
+      processFile(lastFile)
+    } else if (lastSampleId) {
+      handleSample(lastSampleId)
+    }
+  }, [lastFile, lastSampleId, processFile, handleSample])
 
   return (
     <div className="upload-panel">
@@ -115,6 +142,15 @@ export function UploadPanel({ onExtraction, onLoading, onError }: UploadPanelPro
           hidden
         />
       </div>
+
+      {error && (
+        <div className="error-message" role="alert">
+          <p>{error}</p>
+          <button onClick={handleRetry} disabled={isLoading}>
+            Retry
+          </button>
+        </div>
+      )}
 
       <div className="sample-list">
         <p>Or try a sample:</p>
