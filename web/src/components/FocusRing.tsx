@@ -1,5 +1,5 @@
 import type { DiagramGraph, Focus } from '../types/graph'
-import { nodeRect } from '../utils/geometry'
+import { nodeRect, nodeCenter, boundaryPoint } from '../utils/geometry'
 
 interface FocusRingProps {
   graph: DiagramGraph
@@ -42,12 +42,27 @@ export function FocusRing({ graph, focus, aspectRatio }: FocusRingProps) {
     const source = graph.nodes.find((n) => n.id === edge?.source)
     const target = graph.nodes.find((n) => n.id === edge?.target)
     if (!edge || !source || !target) return null
+
+    const sourceCenter = nodeCenter(source, aspectRatio)
+    const targetCenter = nodeCenter(target, aspectRatio)
+    const waypoints = (edge.waypoints || []).map((p) => ({ x: p.x * 1000, y: p.y * 1000 * aspectRatio }))
+
+    const sourceDir = waypoints.length > 0
+      ? { x: waypoints[0].x - sourceCenter.x, y: waypoints[0].y - sourceCenter.y }
+      : { x: targetCenter.x - sourceCenter.x, y: targetCenter.y - sourceCenter.y }
+    const targetDir = waypoints.length > 0
+      ? { x: waypoints[waypoints.length - 1].x - targetCenter.x, y: waypoints[waypoints.length - 1].y - targetCenter.y }
+      : { x: sourceCenter.x - targetCenter.x, y: sourceCenter.y - targetCenter.y }
+
+    const from = boundaryPoint(source, aspectRatio, sourceDir)
+    const to = boundaryPoint(target, aspectRatio, targetDir)
+
     return (
       <line
-        x1={source.x * 1000}
-        y1={source.y * 1000 * aspectRatio}
-        x2={target.x * 1000}
-        y2={target.y * 1000 * aspectRatio}
+        x1={from.x}
+        y1={from.y}
+        x2={to.x}
+        y2={to.y}
         stroke="var(--focus-color)"
         strokeWidth={6}
         className="focus-ring"
