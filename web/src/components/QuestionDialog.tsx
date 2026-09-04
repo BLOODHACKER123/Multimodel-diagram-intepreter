@@ -89,7 +89,7 @@ export function QuestionDialog({ graph, diagramId, focus, onClose }: QuestionDia
             placeholder="e.g. What connects STUDENT to COURSE?"
             aria-label="Your question"
           />
-          <button type="submit" disabled={loading}>
+          <button type="submit" disabled={loading || !question.trim()}>
             {loading ? 'Thinking…' : 'Ask'}
           </button>
         </form>
