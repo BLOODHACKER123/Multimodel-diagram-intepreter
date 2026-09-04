@@ -28,7 +28,7 @@ export const config = Object.freeze({
   nodeEnv: env('NODE_ENV', 'development'),
   corsOrigin: env('CORS_ORIGIN', 'http://localhost:5173'),
   llmProvider: env('LLM_PROVIDER', 'auto'),
-  dashscopeApiKey: env('DASHSCOPE_API_KEY', '') || env('QWEN_API_KEY', ''),
+  dashscopeApiKey: (env('DASHSCOPE_API_KEY', '') || env('QWEN_API_KEY', '')).trim(),
   qwenBaseUrl: env('QWEN_BASE_URL', 'https://dashscope-intl.aliyuncs.com/compatible-mode/v1'),
   qwenVlModel: env('QWEN_VL_MODEL', 'qwen-vl-max'),
   qwenTextModel: env('QWEN_TEXT_MODEL', 'qwen-plus'),
