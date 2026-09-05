@@ -60,8 +60,8 @@ function AppContent() {
     <div className="app">
         <header>
           <span className="eyebrow">Accessible • Audio-Haptic</span>
-            <h1>Multimodal Diagram Interpreter</h1>
-              <p>Touch, hear, and ask questions about technical diagrams.</p>
+          <h1>DiaSight</h1>
+          <p>Diagrams, described for a brighter tomorrow.</p>
         </header>
 
       <main>
